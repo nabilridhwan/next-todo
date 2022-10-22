@@ -11,8 +11,8 @@ import { IconDots, IconPencil, IconTrash } from '@tabler/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
-import { deleteTodo } from '../api/deleteTodo';
-import { toggleCompletedTodo } from '../api/toggleCompletedTodo';
+import { deleteTodo } from '../frontend_api/deleteTodo';
+import { toggleCompletedTodo } from '../frontend_api/toggleCompletedTodo';
 
 export default function Todo({ id, name, completed, desc, due_date }) {
 	const queryClient = useQueryClient();

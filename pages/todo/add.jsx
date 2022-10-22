@@ -13,7 +13,7 @@ import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { addTodo } from '../../api/addTodo';
+import { addTodo } from '../../frontend_api/addTodo';
 
 export default function AddTodo() {
 	const {

@@ -10,8 +10,8 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import Head from 'next/head';
 import Link from 'next/link';
-import { getAllTodos } from '../api/getAllTodos';
 import Todo from '../component/Todo';
+import { getAllTodos } from '../frontend_api/getAllTodos';
 
 export default function Home() {
 	const {

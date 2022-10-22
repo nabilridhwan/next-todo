@@ -13,8 +13,8 @@ import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getTodoById } from '../../../api/getTodoById';
-import { updateTodo } from '../../../api/updateTodo';
+import { getTodoById } from '../../../frontend_api/getTodoById';
+import { updateTodo } from '../../../frontend_api/updateTodo';
 
 export async function getServerSideProps(context) {
 	try {
