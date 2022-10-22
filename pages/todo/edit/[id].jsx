@@ -4,6 +4,7 @@ import {
 	Button,
 	Group,
 	Loader,
+	Stack,
 	Textarea,
 	TextInput,
 } from '@mantine/core';
@@ -105,38 +106,40 @@ export default function EditTodo({ todo }) {
 				)}
 
 				<form onSubmit={handleSubmit}>
-					<TextInput
-						withAsterisk
-						label="Task name"
-						placeholder="Wash the dishes"
-						{...form.getInputProps('name')}
-					/>
-					<Textarea
-						label="Description"
-						placeholder="Important stuff!!!"
-						{...form.getInputProps('desc')}
-					/>
-					<DatePicker
-						placeholder="Pick date"
-						label="Due Date"
-						allowFreeInput
-						{...form.getInputProps('due_date')}
-					/>
+					<Stack>
+						<TextInput
+							withAsterisk
+							label="Task name"
+							placeholder="Wash the dishes"
+							{...form.getInputProps('name')}
+						/>
+						<Textarea
+							label="Description"
+							placeholder="Important stuff!!!"
+							{...form.getInputProps('desc')}
+						/>
+						<DatePicker
+							placeholder="Pick date"
+							label="Due Date"
+							allowFreeInput
+							{...form.getInputProps('due_date')}
+						/>
 
-					<Group position="right" mt="md">
-						<Link href="/">
-							<Button type="submit" component="a" color="red">
-								Cancel
+						<Group position="right" mt="md">
+							<Link href="/">
+								<Button type="submit" component="a" color="red">
+									Cancel
+								</Button>
+							</Link>
+							<Button type="submit" disabled={isLoading}>
+								{isLoading ? (
+									<Loader color="white" size="sm" />
+								) : (
+									'Save'
+								)}
 							</Button>
-						</Link>
-						<Button type="submit" disabled={isLoading}>
-							{isLoading ? (
-								<Loader color="white" size="sm" />
-							) : (
-								'Save'
-							)}
-						</Button>
-					</Group>
+						</Group>
+					</Stack>
 				</form>
 			</Box>
 		</div>
