@@ -1,12 +1,15 @@
 import {
 	Alert,
+	Box,
 	Button,
 	Center,
 	Container,
+	Group,
 	Loader,
 	Stack,
 	Title,
 } from '@mantine/core';
+import { IconRefresh } from '@tabler/icons';
 import { useQuery } from '@tanstack/react-query';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -18,6 +21,7 @@ export default function Home() {
 		data: todos,
 		status,
 		isLoading,
+		refetch,
 		error,
 	} = useQuery(['getAllTodos'], () => getAllTodos());
 
@@ -33,31 +37,54 @@ export default function Home() {
 			</Head>
 
 			<Container>
-				<Title order={1}>Welcome</Title>
+				<Stack my="lg">
+					<Title order={1} align="center">
+						Welcome
+					</Title>
 
-				<Link href="/todo/add" passHref>
-					<Button component="a">Click here to add a todo item</Button>
-				</Link>
-
-				{status === 'error' && error && (
-					<Alert title="An error occurred" color="red">
-						{JSON.stringify(error)}
-					</Alert>
-				)}
-
-				{isLoading && (
 					<Center>
-						<Loader />
+						<Link href="/todo/add" passHref>
+							<Button component="a">
+								Click here to add a todo item
+							</Button>
+						</Link>
 					</Center>
-				)}
+				</Stack>
 
-				{status === 'success' && (
-					<Stack>
-						{todos.map((todo, index) => (
-							<Todo key={todo.id} {...todo} />
-						))}
-					</Stack>
-				)}
+				<Group position="right">
+					<Button
+						mt="lg"
+						leftIcon={<IconRefresh size={14} />}
+						variant="outline"
+						color="gray"
+						size="xs"
+						onClick={refetch}
+					>
+						Refresh
+					</Button>
+				</Group>
+
+				<Box my="lg">
+					{status === 'error' && error && (
+						<Alert title="An error occurred" color="red">
+							{JSON.stringify(error)}
+						</Alert>
+					)}
+
+					{isLoading && (
+						<Center>
+							<Loader />
+						</Center>
+					)}
+
+					{status === 'success' && (
+						<Stack>
+							{todos.map((todo, index) => (
+								<Todo key={todo.id} {...todo} />
+							))}
+						</Stack>
+					)}
+				</Box>
 			</Container>
 		</div>
 	);
