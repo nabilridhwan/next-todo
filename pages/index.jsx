@@ -6,6 +6,7 @@ import {
 	Container,
 	Group,
 	Loader,
+	LoadingOverlay,
 	Stack,
 	Title,
 } from '@mantine/core';
@@ -23,6 +24,7 @@ export default function Home() {
 		isLoading,
 		refetch,
 		error,
+		isRefetching,
 	} = useQuery(['getAllTodos'], () => getAllTodos());
 
 	return (
@@ -65,6 +67,19 @@ export default function Home() {
 				</Group>
 
 				<Box my="lg">
+					{isRefetching && (
+						<>
+							<LoadingOverlay
+								overlayOpacity={0.3}
+								overlayColor="black"
+								overlayBlur={1}
+								loaderProps={{ color: 'white' }}
+								visible={isRefetching || isLoading}
+								zIndex={5}
+							/>
+						</>
+					)}
+
 					{status === 'error' && error && (
 						<Alert title="An error occurred" color="red">
 							{JSON.stringify(error)}
