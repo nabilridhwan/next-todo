@@ -25,19 +25,13 @@ export async function getServerSideProps(context) {
 		console.log(data);
 
 		if (!data || data.length === 0) {
-			return {
-				redirect: {
-					permanent: false,
-					destination: `/`,
-				},
-			};
+			throw new Error('No todo found');
 		}
 
 		return {
 			props: { todo: data[0] }, // will be passed to the page component as props
 		};
 	} catch (error) {
-		console.log(error.response.data);
 		return {
 			redirect: {
 				permanent: false,
