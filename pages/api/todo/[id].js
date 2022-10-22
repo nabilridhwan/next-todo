@@ -36,7 +36,7 @@ export default async function handler(req, res) {
 		// Post function
 		const putTodoSchema = yup.object().shape({
 			name: yup.string(),
-			desc: yup.string().default(''),
+			desc: yup.string(),
 			completed: yup.bool().notRequired(),
 			due_date: yup.string().nullable(),
 		});
