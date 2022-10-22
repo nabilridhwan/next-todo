@@ -10,14 +10,11 @@ import {
 import { IconDots, IconPencil, IconTrash } from '@tabler/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
-import { useState } from 'react';
 import { deleteTodo } from '../frontend_api/deleteTodo';
 import { toggleCompletedTodo } from '../frontend_api/toggleCompletedTodo';
 
 export default function Todo({ id, name, completed, desc, due_date }) {
 	const queryClient = useQueryClient();
-
-	const [completedState, setCompletedState] = useState(completed);
 
 	const { mutateAsync: toggleCompletedTodoMutation } = useMutation(
 		['toggleCompletedTodo', id],
@@ -32,8 +29,6 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 	async function handleChecked(event) {
 		const { checked } = event.currentTarget;
 		console.log(checked);
-
-		setCompletedState(checked);
 
 		await toggleCompletedTodoMutation(checked);
 		await queryClient.invalidateQueries(['getAllTodos']);
@@ -50,10 +45,10 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 				<Checkbox
 					color="gray"
 					onChange={handleChecked}
-					checked={completedState}
+					checked={completed}
 				/>
 				<div style={{ flex: 1 }}>
-					{!completedState ? (
+					{!completed ? (
 						<Text>{name}</Text>
 					) : (
 						<Text strikethrough color="dimmed">
@@ -61,15 +56,18 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 						</Text>
 					)}
 
-					{!completedState && (
+					{!completed && (
 						<Text color="dimmed" size="sm">
-							{desc}
+							{desc &&
+								`${desc.slice(0, 40)}${
+									desc.length > 40 ? '...' : ''
+								}`}
 						</Text>
 					)}
 
 					<Space h="xs" />
 
-					{!completedState &&
+					{!completed &&
 						(due_date ? (
 							<Text
 								size={'sm'}
@@ -77,7 +75,7 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 									DateTime.fromISO(due_date)
 										.diffNow()
 										.as('days') <= 7
-										? 'red'
+										? 'red.5'
 										: 'dimmed'
 								}
 							>
