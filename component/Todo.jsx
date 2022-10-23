@@ -1,30 +1,34 @@
 import {
-	Button,
+	ActionIcon,
+	Anchor,
 	Checkbox,
 	Group,
+	LoadingOverlay,
 	Menu,
 	Paper,
 	Space,
 	Text,
+	Tooltip,
 } from '@mantine/core';
 import { IconDots, IconPencil, IconTrash } from '@tabler/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
+import Link from 'next/link';
 import { deleteTodo } from '../frontend_api/deleteTodo';
 import { toggleCompletedTodo } from '../frontend_api/toggleCompletedTodo';
 
 export default function Todo({ id, name, completed, desc, due_date }) {
 	const queryClient = useQueryClient();
 
-	const { mutateAsync: toggleCompletedTodoMutation } = useMutation(
-		['toggleCompletedTodo', id],
-		(completed) => toggleCompletedTodo({ id, completed })
+	const {
+		mutateAsync: toggleCompletedTodoMutation,
+		isLoading: toggleCompletedIsLoading,
+	} = useMutation(['toggleCompletedTodo', id], (completed) =>
+		toggleCompletedTodo({ id, completed })
 	);
 
-	const { mutateAsync: deleteTodoMutation } = useMutation(
-		['deleteTodo', id],
-		() => deleteTodo({ id })
-	);
+	const { mutateAsync: deleteTodoMutation, isLoading: deleteTodoIsLoading } =
+		useMutation(['deleteTodo', id], () => deleteTodo({ id }));
 
 	async function handleChecked(event) {
 		const { checked } = event.currentTarget;
@@ -40,7 +44,16 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 	}
 
 	return (
-		<Paper shadow="md" withBorder p="sm">
+		<Paper shadow="xs" withBorder p="md" radius="lg">
+			{/* Overlay when delete or toggle completed is in process */}
+			<LoadingOverlay
+				overlayOpacity={0.2}
+				overlayColor="black"
+				loaderProps={{ color: 'white' }}
+				visible={deleteTodoIsLoading || toggleCompletedIsLoading}
+				zIndex={5}
+			/>
+
 			<Group>
 				<Checkbox
 					color="gray"
@@ -48,21 +61,27 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 					checked={completed}
 				/>
 				<div style={{ flex: 1 }}>
-					{!completed ? (
-						<Text>{name}</Text>
-					) : (
-						<Text strikethrough color="dimmed">
-							{name}
-						</Text>
-					)}
+					<Link href={`/todo/${id}`}>
+						<Anchor component={'a'} color="gray.3">
+							{!completed ? (
+								<Text>{name}</Text>
+							) : (
+								<Text strikethrough color="dimmed">
+									{name}
+								</Text>
+							)}
+						</Anchor>
+					</Link>
 
 					{!completed && (
-						<Text color="dimmed" size="sm">
-							{desc &&
-								`${desc.slice(0, 40)}${
-									desc.length > 40 ? '...' : ''
-								}`}
-						</Text>
+						<Tooltip position="bottom-start" label={desc} withArrow>
+							<Text color="dimmed" size="sm">
+								{desc &&
+									`${desc.slice(0, 40)}${
+										desc.length > 40 ? '...' : ''
+									}`}
+							</Text>
+						</Tooltip>
 					)}
 
 					<Space h="xs" />
@@ -90,9 +109,9 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 
 				<Menu shadow="md" width={200}>
 					<Menu.Target>
-						<Button variant="subtle" size="xs" color="dark">
-							<IconDots size={14} />
-						</Button>
+						<ActionIcon variant="default">
+							<IconDots size={16} />
+						</ActionIcon>
 					</Menu.Target>
 
 					<Menu.Dropdown>
