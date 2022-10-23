@@ -12,6 +12,7 @@ import { DatePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { addTodo } from '../../frontend_api/addTodo';
@@ -69,6 +70,9 @@ export default function AddTodo() {
 
 	return (
 		<div>
+			<Head>
+				<title>Add todo</title>
+			</Head>
 			<Box sx={{ maxWidth: 300 }} mx="auto">
 				<h1>Add Todo</h1>
 
@@ -87,6 +91,7 @@ export default function AddTodo() {
 							{...form.getInputProps('name')}
 						/>
 						<Textarea
+							autosize
 							label="Description"
 							placeholder="Task description"
 							{...form.getInputProps('desc')}
