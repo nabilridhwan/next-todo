@@ -4,13 +4,15 @@ import {
 	Button,
 	Center,
 	Container,
+	Divider,
 	Group,
 	Loader,
 	LoadingOverlay,
 	Stack,
+	Text,
 	Title,
 } from '@mantine/core';
-import { IconRefresh } from '@tabler/icons';
+import { IconPlus, IconRefresh } from '@tabler/icons';
 import { useQuery } from '@tanstack/react-query';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -41,44 +43,43 @@ export default function Home() {
 			<Container>
 				<Stack my="lg">
 					<Title order={1} align="center">
-						Welcome
+						Next Todo Application
 					</Title>
 
-					<Center>
-						<Link href="/todo/add" passHref>
-							<Button component="a">
-								Click here to add a todo item
-							</Button>
-						</Link>
-					</Center>
+					<Text align="center">
+						An application that quickly showcases the basic features
+						of Next.js along with Cypress testing
+					</Text>
 				</Stack>
 
-				<Group position="right">
+				<Divider />
+
+				<Group position="right" my="lg">
 					<Button
-						mt="lg"
 						leftIcon={<IconRefresh size={14} />}
 						variant="outline"
 						color="gray"
-						size="xs"
 						onClick={refetch}
 					>
 						Refresh
 					</Button>
+
+					<Link href="/todo/add" passHref>
+						<Button component="a" leftIcon={<IconPlus size={14} />}>
+							Add
+						</Button>
+					</Link>
 				</Group>
 
 				<Box my="lg">
-					{isRefetching && (
-						<>
-							<LoadingOverlay
-								overlayOpacity={0.3}
-								overlayColor="black"
-								overlayBlur={1}
-								loaderProps={{ color: 'white' }}
-								visible={isRefetching || isLoading}
-								zIndex={5}
-							/>
-						</>
-					)}
+					{/* Overlay if the todos are being refetched or is loading */}
+					<LoadingOverlay
+						overlayOpacity={0.2}
+						overlayColor="black"
+						loaderProps={{ color: 'white' }}
+						visible={isRefetching || isLoading}
+						zIndex={5}
+					/>
 
 					{status === 'error' && error && (
 						<Alert title="An error occurred" color="red">
