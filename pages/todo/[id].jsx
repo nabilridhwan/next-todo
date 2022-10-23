@@ -11,6 +11,7 @@ import {
 import { IconArrowLeft, IconPencil, IconTrash } from '@tabler/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
+import Head from 'next/head';
 import Link from 'next/link';
 import { deleteTodo } from '../../frontend_api/deleteTodo';
 import { getTodoById } from '../../frontend_api/getTodoById';
@@ -76,6 +77,10 @@ export default function EditTodo({
 
 	return (
 		<Container>
+			<Head>
+				<title>{name}</title>
+			</Head>
+
 			<Box mx="auto" my="lg">
 				<Link href={`/`} passHref>
 					<Button

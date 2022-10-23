@@ -12,6 +12,7 @@ import { DatePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getTodoById } from '../../../frontend_api/getTodoById';
@@ -95,6 +96,9 @@ export default function EditTodo({ todo }) {
 
 	return (
 		<div>
+			<Head>
+				<title>Edit &quot;{todo.name}&quot;</title>
+			</Head>
 			<Box sx={{ maxWidth: 300 }} mx="auto">
 				<h1>Edit Todo</h1>
 
@@ -115,6 +119,7 @@ export default function EditTodo({ todo }) {
 						/>
 						<Textarea
 							label="Description"
+							autosize
 							placeholder="Important stuff!!!"
 							{...form.getInputProps('desc')}
 						/>
