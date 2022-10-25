@@ -1,13 +1,3 @@
-import {
-	Box,
-	Button,
-	Checkbox,
-	Container,
-	Group,
-	Space,
-	Text,
-	Title,
-} from '@mantine/core';
 import { IconArrowLeft, IconPencil, IconTrash } from '@tabler/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
@@ -76,75 +66,64 @@ export default function EditTodo({
 	}
 
 	return (
-		<Container>
+		<div>
 			<Head>
 				<title>{name}</title>
 			</Head>
 
-			<Box mx="auto" my="lg">
-				<Link href={`/`} passHref>
-					<Button
-						component="a"
-						leftIcon={<IconArrowLeft size={16} />}
-						variant="outline"
-					>
-						Back
-					</Button>
-				</Link>
+			<Link href={`/`} passHref>
+				<button
+					className="btn"
+					component="a"
+					leftIcon={<IconArrowLeft size={16} />}
+					variant="outline"
+				>
+					Back
+				</button>
+			</Link>
 
-				<Group my="lg" over>
-					<Checkbox
+			{/* <Checkbox
 						color="gray"
 						onChange={handleChecked}
 						checked={completed}
-					/>
+					/> */}
 
-					<Title order={2}>{name}</Title>
-				</Group>
+			<h1>{name}</h1>
 
+			<p>
 				{desc ? (
-					<Text>{desc}</Text>
+					<span>{desc}</span>
 				) : (
-					<Text italic>No description provided</Text>
+					<span className="text-gray-500">No description</span>
 				)}
+			</p>
 
-				<Space h="lg" />
+			<p>
+				Due on {DateTime.fromISO(due_date).toFormat('dd LLL yyyy')} (
+				{DateTime.fromISO(due_date).toRelative()})
+			</p>
 
-				<Text color="dimmed" size="sm">
-					Due on {DateTime.fromISO(due_date).toFormat('dd LLL yyyy')}{' '}
-					({DateTime.fromISO(due_date).toRelative()})
-				</Text>
+			<p>
+				Created at{' '}
+				{DateTime.fromISO(created_at).toFormat('dd LLL yyyy')} (
+				{DateTime.fromISO(created_at).toRelative()})
+			</p>
 
-				<Text color="dimmed" size="sm">
-					Created at{' '}
-					{DateTime.fromISO(created_at).toFormat('dd LLL yyyy')} (
-					{DateTime.fromISO(created_at).toRelative()})
-				</Text>
+			<p>Last updated {DateTime.fromISO(updated_at).toRelative()}</p>
 
-				<Text color="dimmed" size="sm">
-					Last updated {DateTime.fromISO(updated_at).toRelative()}
-				</Text>
+			<div className="flex">
+				<button className="btn" component="a" onClick={handleDelete}>
+					<IconTrash size={16} />
+					Delete
+				</button>
 
-				<Group position="right" my="lg">
-					<Button
-						color="red"
-						component="a"
-						leftIcon={<IconTrash size={16} />}
-						onClick={handleDelete}
-					>
-						Delete
-					</Button>
-
-					<Link href={`/todo/edit/${id}`} passHref>
-						<Button
-							component="a"
-							leftIcon={<IconPencil size={16} />}
-						>
-							Edit
-						</Button>
-					</Link>
-				</Group>
-			</Box>
-		</Container>
+				<Link href={`/todo/edit/${id}`} passHref>
+					<button className="btn btn-primary" component="a">
+						<IconPencil size={16} />
+						Edit
+					</button>
+				</Link>
+			</div>
+		</div>
 	);
 }

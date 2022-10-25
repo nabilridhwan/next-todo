@@ -1,22 +1,8 @@
-import {
-	Alert,
-	Box,
-	Button,
-	Center,
-	Container,
-	Divider,
-	Group,
-	Loader,
-	LoadingOverlay,
-	Stack,
-	Text,
-	Title,
-} from '@mantine/core';
-import { IconPlus, IconRefresh } from '@tabler/icons';
+import { IconPlus } from '@tabler/icons';
 import { useQuery } from '@tanstack/react-query';
 import Head from 'next/head';
 import Link from 'next/link';
-import Todo from '../component/Todo';
+import Todo from '../components/Todo';
 import { getAllTodos } from '../frontend_api/getAllTodos';
 
 export default function Home() {
@@ -46,68 +32,65 @@ export default function Home() {
 				/>
 			</Head>
 
-			<Container>
-				<Stack my="lg">
-					<Title order={1} align="center">
-						Next Todo Application
-					</Title>
+			<main>
+				<h1>Next Todo Application</h1>
 
-					<Text align="center">
-						An application that quickly showcases the basic features
-						of Next.js along with Cypress testing
-					</Text>
-				</Stack>
+				<p>
+					An application that quickly showcases the basic features of
+					Next.js along with Cypress testing
+				</p>
 
-				<Divider />
-
-				<Group position="right" my="lg">
-					<Button
-						leftIcon={<IconRefresh size={14} />}
-						variant="outline"
-						color="gray"
+				<div className="flex gap-2 justify-end mt-5">
+					<button
+						className={`btn ${
+							isRefetching || isLoading ? 'loading' : ''
+						}`}
+						data-cy="refresh_todos_button"
 						onClick={refetch}
 					>
 						Refresh
-					</Button>
+					</button>
 
 					<Link href="/todo/add" passHref>
-						<Button component="a" leftIcon={<IconPlus size={14} />}>
+						<button
+							className="btn btn-primary flex flex-row gap-1"
+							data-cy="add_todo_button"
+						>
+							<IconPlus size={16} />
 							Add
-						</Button>
+						</button>
 					</Link>
-				</Group>
+				</div>
 
-				<Box my="lg">
-					{/* Overlay if the todos are being refetched or is loading */}
-					<LoadingOverlay
-						overlayOpacity={0.2}
-						overlayColor="black"
-						loaderProps={{ color: 'white' }}
-						visible={isRefetching || isLoading}
-						zIndex={5}
-					/>
+				{/* Overlay if the todos are being refetched or is loading */}
+				{/* <LoadingOverlay
+					overlayOpacity={0.2}
+					overlayColor="black"
+					loaderProps={{ color: 'white' }}
+					visible={isRefetching || isLoading}
+					zIndex={5}
+				/> */}
 
-					{status === 'error' && error && (
-						<Alert title="An error occurred" color="red">
-							{JSON.stringify(error)}
-						</Alert>
-					)}
+				{status === 'error' && error && (
+					<div className="alert shadow-lg">
+						{JSON.stringify(error)}
+					</div>
+				)}
 
-					{isLoading && (
-						<Center>
-							<Loader />
-						</Center>
-					)}
+				{/* {isLoading && (
+					<Center>
+						<Loader />
+					</Center>
+				)} */}
 
-					{status === 'success' && (
-						<Stack>
-							{todos.map((todo, index) => (
-								<Todo key={todo.id} {...todo} />
-							))}
-						</Stack>
-					)}
-				</Box>
-			</Container>
+				{status === 'success' && (
+					<div data-cy="todo_list">
+						{todos.map((todo, index) => (
+							<Todo key={todo.id} {...todo} />
+						))}
+					</div>
+				)}
+			</main>
 		</div>
 	);
 }

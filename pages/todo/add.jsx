@@ -1,15 +1,3 @@
-import {
-	Alert,
-	Box,
-	Button,
-	Group,
-	Loader,
-	Stack,
-	Textarea,
-	TextInput,
-} from '@mantine/core';
-import { DatePicker } from '@mantine/dates';
-import { useForm } from '@mantine/form';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import Head from 'next/head';
@@ -29,32 +17,22 @@ export default function AddTodo() {
 	});
 
 	const [errorMessage, setErrorMessage] = useState('');
+	const [name, setName] = useState('');
+	const [desc, setDesc] = useState('');
+	const [due_date, setDueDate] = useState('');
 
 	useEffect(() => {
 		if (status === 'error') {
 			console.log(error);
 		}
-	}, [status]);
-
-	const form = useForm({
-		initialValues: {
-			name: '',
-			desc: '',
-			due_date: null,
-		},
-
-		// validate: {
-		// 	email: (value) =>
-		// 		/^\S+@\S+$/.test(value) ? null : 'Invalid email',
-		// },
-	});
+	}, [status, error]);
 
 	async function handleSubmit(e) {
 		try {
 			e.preventDefault();
-			console.log(form.values);
+			// console.log(form.values);
 
-			await addTodoMutate(form.values);
+			await addTodoMutate({ name, desc, due_date });
 
 			window.location = '/';
 		} catch (error) {
@@ -73,53 +51,109 @@ export default function AddTodo() {
 			<Head>
 				<title>Add todo</title>
 			</Head>
-			<Box sx={{ maxWidth: 300 }} mx="auto">
-				<h1>Add Todo</h1>
+			<h1>Add Todo</h1>
 
-				{errorMessage && (
-					<Alert title="An error occurred" color="red">
-						{errorMessage.join(', ')}
-					</Alert>
-				)}
+			{/* Error alert box */}
+			{errorMessage && (
+				<div
+					className="alert"
+					title="An error occurred"
+					color="red"
+					data-cy="add_todo_error"
+				>
+					<div className="alert alert-error shadow-lg">
+						<div>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="stroke-current flex-shrink-0 h-6 w-6"
+								fill="none"
+								viewBox="0 0 24 24"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth="2"
+									d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+								/>
+							</svg>
+							<span></span>
+							{errorMessage.join(', ')}
+						</div>
+					</div>
+				</div>
+			)}
 
-				<form onSubmit={handleSubmit}>
-					<Stack>
-						<TextInput
-							withAsterisk
-							label="Task name"
-							placeholder="Task name"
-							{...form.getInputProps('name')}
-						/>
-						<Textarea
-							autosize
-							label="Description"
-							placeholder="Task description"
-							{...form.getInputProps('desc')}
-						/>
-						<DatePicker
-							placeholder="Pick date"
-							label="Due Date"
-							allowFreeInput
-							{...form.getInputProps('due_date')}
-						/>
+			<form onSubmit={handleSubmit}>
+				<div className="form-control">
+					<span class="label-text">Task Name</span>
+					<input
+						type="text"
+						label="Task name"
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+						data-cy="task_name_add_todo_field"
+						placeholder="Task name"
+						className="input input-bordered w-full"
+					/>
+				</div>
 
-						<Group position="right" mt="md">
-							<Link href="/">
-								<Button type="submit" component="a" color="red">
-									Cancel
-								</Button>
-							</Link>
-							<Button type="submit" disabled={isLoading}>
-								{isLoading ? (
-									<Loader color="white" size="sm" />
-								) : (
-									'Add todo'
-								)}
-							</Button>
-						</Group>
-					</Stack>
-				</form>
-			</Box>
+				<div className="form-control">
+					<span class="label-text">Task Description</span>
+
+					<textarea
+						type="text"
+						data-cy="description_add_todo_field"
+						label="Description"
+						value={desc}
+						onChange={(e) => setDesc(e.target.value)}
+						placeholder="Task description"
+						className="textarea textarea-bordered w-full"
+					/>
+				</div>
+
+				<div className="form-control">
+					<span class="label-text">Due Date</span>
+					<input
+						type={'datetime-local'}
+						value={due_date}
+						onChange={(e) => setDueDate(e.target.value)}
+						data-cy="date_add_todo_field"
+						placeholder="Pick date"
+						className="input input-bordered w-full"
+						label="Due Date"
+					/>
+				</div>
+
+				{/* <Group position="right" mt="md">
+							
+						</Group> */}
+
+				<div className="form-control">
+					<div className="flex">
+						<Link href="/">
+							<button
+								className="btn btn-danger"
+								data-cy="cancel_add_todo_button"
+								type="submit"
+								component="a"
+								color="red"
+							>
+								Cancel
+							</button>
+						</Link>
+						<button
+							className={`btn btn-primary ${
+								isLoading ? 'loading' : ''
+							}`}
+							data-cy="submit_add_todo_button"
+							type="submit"
+							disabled={isLoading}
+						>
+							Add todo
+						</button>
+					</div>
+				</div>
+			</form>
 		</div>
 	);
 }

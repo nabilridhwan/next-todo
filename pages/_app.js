@@ -1,22 +1,15 @@
-import { MantineProvider } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }) {
 	const queryClient = new QueryClient();
 	return (
 		<>
-			<MantineProvider
-				withGlobalStyles
-				withNormalizeCSS
-				theme={{
-					/** Put your mantine theme override here */
-					colorScheme: 'dark',
-				}}
-			>
-				<QueryClientProvider client={queryClient}>
+			<QueryClientProvider client={queryClient}>
+				<div className="w-11/12 m-auto">
 					<Component {...pageProps} />
-				</QueryClientProvider>
-			</MantineProvider>
+				</div>
+			</QueryClientProvider>
 		</>
 	);
 }
