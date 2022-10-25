@@ -33,6 +33,18 @@ describe('Add todo page', () => {
 		cy.get('[data-cy=todo_list]').contains(TODO_NAME);
 		cy.get('[data-cy=todo_list]').contains(TODO_DESCRIPTION);
 	});
+
+	it('Adding normal todo without due date should work', () => {
+		cy.get('[data-cy=task_name_add_todo_field]').type(TODO_NAME + '2');
+		cy.get('[data-cy=description_add_todo_field]').type(
+			TODO_DESCRIPTION + '2'
+		);
+		cy.get('[data-cy=submit_add_todo_button]').click({ force: true });
+
+		cy.location('pathname').should('eq', '/');
+		cy.get('[data-cy=todo_list]').contains(TODO_NAME + '2');
+		cy.get('[data-cy=todo_list]').contains(TODO_DESCRIPTION + '2');
+	});
 });
 
 export {};
