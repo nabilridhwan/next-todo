@@ -33,12 +33,14 @@ export default function Home() {
 			</Head>
 
 			<main>
-				<h1>Next Todo Application</h1>
+				<header className="my-10">
+					<h1>Next Todo Application</h1>
 
-				<p>
-					An application that quickly showcases the basic features of
-					Next.js along with Cypress testing
-				</p>
+					<p>
+						An application that quickly showcases the basic features
+						of Next.js along with Cypress testing
+					</p>
+				</header>
 
 				<div className="flex gap-2 justify-end mt-5">
 					<button

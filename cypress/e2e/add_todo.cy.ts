@@ -15,7 +15,7 @@ describe('Add todo page', () => {
 	it('Should be error when task name is not filled in', () => {
 		// cy.get('[data-cy=task_name_add_todo_field]').type('Test');
 		cy.get('[data-cy=description_add_todo_field]').type('Test');
-		cy.get('[data-cy=date_add_todo_field]').type('November 23 2022');
+		cy.get('[data-cy=date_add_todo_field]').type('2022-12-31');
 		cy.get('[data-cy=submit_add_todo_button]').click({ force: true });
 
 		cy.get('[data-cy=add_todo_error]').contains('Task name is required', {

@@ -35,14 +35,29 @@ export default async function handler(req, res) {
 	if (req.method === 'PUT') {
 		// Post function
 		const putTodoSchema = yup.object().shape({
-			name: yup.string(),
+			name: yup.string().required('Task name is required'),
 			desc: yup.string(),
 			completed: yup.bool().notRequired(),
 			due_date: yup.string().nullable(),
 		});
 
 		try {
-			const validated = await putTodoSchema.validate(req.body);
+			const { data: getTodoData, error: getTodoError } =
+				await supabaseClient.from('todo').select('*').eq('id', id);
+
+			// Get the first todo
+			const t = getTodoData[0];
+
+			if (!t) {
+				return new InternalServerError('Todo not found').handleResponse(
+					req,
+					res
+				);
+			}
+
+			let tObj = { ...t, ...req.body };
+
+			const validated = await putTodoSchema.validate(tObj);
 
 			const { data, error } = await supabaseClient
 				.from('todo')

@@ -32,7 +32,10 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 	}
 
 	return (
-		<div className="card shadow-md my-3">
+		<div
+			className="card shadow-lg outline outline-1 outline-white/10 my-3 todo-card"
+			id={`todo-${id}`}
+		>
 			<div className="card-body">
 				<div className="flex items-center">
 					{/* Overlay when delete or toggle completed is in process */}
@@ -48,7 +51,7 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 						type="checkbox"
 						onChange={handleChecked}
 						checked={completed}
-						className="checkbox checkbox-accent checkbox-sm mr-3"
+						className="checkbox checkbox-sm mr-4"
 					/>
 
 					<div style={{ flex: 1 }}>

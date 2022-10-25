@@ -35,9 +35,9 @@ export default function EditTodo({ todo }) {
 	const [name, setName] = useState(todo.name);
 	const [desc, setDesc] = useState(todo.desc);
 
-	// TODO: Fix date!
-	const [due_date, setDueDate] = useState();
-
+	const [due_date, setDueDate] = useState(
+		new Date(todo.due_date).toISOString().split('T')[0] || ''
+	);
 	const [errorMessage, setErrorMessage] = useState('');
 
 	const {
@@ -82,43 +82,36 @@ export default function EditTodo({ todo }) {
 
 			{/* Error alert box */}
 			{errorMessage && (
-				<div
-					className="alert"
-					title="An error occurred"
-					color="red"
-					data-cy="add_todo_error"
-				>
-					<div className="alert alert-error shadow-lg">
-						<div>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								className="stroke-current flex-shrink-0 h-6 w-6"
-								fill="none"
-								viewBox="0 0 24 24"
-							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth="2"
-									d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-								/>
-							</svg>
-							<span></span>
-							{errorMessage.join(', ')}
-						</div>
+				<div className="alert alert-error" data-cy="edit_todo_error">
+					<div>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="stroke-current flex-shrink-0 h-6 w-6"
+							fill="none"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+							/>
+						</svg>
+						<span></span>
+						{errorMessage.join(', ')}
 					</div>
 				</div>
 			)}
 
 			<form onSubmit={handleSubmit}>
 				<div className="form-control">
-					<span class="label-text">Task Name</span>
+					<span className="label-text">Task Name</span>
 					<input
 						type="text"
 						label="Task name"
 						value={name}
 						onChange={(e) => setName(e.target.value)}
-						data-cy="task_name_add_todo_field"
+						data-cy="task_name_edit_todo_field"
 						placeholder="Task name"
 						className="input input-bordered w-full"
 					/>
@@ -129,7 +122,7 @@ export default function EditTodo({ todo }) {
 
 					<textarea
 						type="text"
-						data-cy="description_add_todo_field"
+						data-cy="description_edit_todo_field"
 						label="Description"
 						value={desc}
 						onChange={(e) => setDesc(e.target.value)}
@@ -141,10 +134,10 @@ export default function EditTodo({ todo }) {
 				<div className="form-control">
 					<span class="label-text">Due Date</span>
 					<input
-						type={'datetime-local'}
+						type="date"
 						value={due_date}
 						onChange={(e) => setDueDate(e.target.value)}
-						data-cy="date_add_todo_field"
+						data-cy="date_edit_todo_field"
 						placeholder="Pick date"
 						className="input input-bordered w-full"
 						label="Due Date"
@@ -152,11 +145,11 @@ export default function EditTodo({ todo }) {
 				</div>
 
 				<div className="form-control">
-					<div className="flex">
+					<div className="flex gap-3">
 						<Link href="/">
 							<button
 								className="btn btn-danger"
-								data-cy="cancel_add_todo_button"
+								data-cy="cancel_edit_todo_button"
 								type="submit"
 								component="a"
 								color="red"
@@ -168,7 +161,7 @@ export default function EditTodo({ todo }) {
 							className={`btn btn-primary ${
 								isLoading ? 'loading' : ''
 							}`}
-							data-cy="submit_add_todo_button"
+							data-cy="submit_edit_todo_button"
 							type="submit"
 							disabled={isLoading}
 						>
