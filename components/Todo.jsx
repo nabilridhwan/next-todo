@@ -2,6 +2,7 @@ import { IconPencil, IconTrash } from '@tabler/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
+import { useState } from 'react';
 import { deleteTodo } from '../frontend_api/deleteTodo';
 import { toggleCompletedTodo } from '../frontend_api/toggleCompletedTodo';
 
@@ -17,6 +18,10 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 
 	const { mutateAsync: deleteTodoMutation, isLoading: deleteTodoIsLoading } =
 		useMutation(['deleteTodo', id], () => deleteTodo({ id }));
+
+	const [disableButton, setDisableButton] = useState(
+		toggleCompletedIsLoading || deleteTodoIsLoading
+	);
 
 	async function handleChecked(event) {
 		const { checked } = event.currentTarget;
@@ -51,6 +56,7 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 						type="checkbox"
 						onChange={handleChecked}
 						checked={completed}
+						disabled={disableButton}
 						className="checkbox checkbox-sm mr-4"
 					/>
 
@@ -95,7 +101,8 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 									</p>
 								) : (
 									<p
-									// size={'sm'} color="dimmed"
+										className="text-sm"
+										// size={'sm'} color="dimmed"
 									>
 										No due date
 									</p>
@@ -106,12 +113,16 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 					{/* Action buttons */}
 					<div className="flex">
 						<Link href={`/todo/edit/${id}`}>
-							<button className="btn btn-square btn-sm btn-ghost">
+							<button
+								disabled={disableButton}
+								className="btn btn-square btn-sm btn-ghost"
+							>
 								<IconPencil size={20} />
 							</button>
 						</Link>
 
 						<button
+							disabled={disableButton}
 							className="btn btn-square btn-ghost btn-sm text-red-500"
 							onClick={handleDelete}
 						>

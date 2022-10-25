@@ -19,7 +19,7 @@ export default function AddTodo() {
 	const [errorMessage, setErrorMessage] = useState('');
 	const [name, setName] = useState('');
 	const [desc, setDesc] = useState('');
-	const [due_date, setDueDate] = useState('');
+	const [due_date, setDueDate] = useState(null);
 
 	useEffect(() => {
 		if (status === 'error') {
