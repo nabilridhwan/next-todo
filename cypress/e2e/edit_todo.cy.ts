@@ -19,3 +19,5 @@ describe('Edit page', () => {
 		});
 	});
 });
+
+export {};

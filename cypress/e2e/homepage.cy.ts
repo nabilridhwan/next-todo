@@ -39,3 +39,5 @@ describe('Home page', () => {
 	// 	cy.location('pathname').should('eq', `/todo/edit/${id}`);
 	// });
 });
+
+export {};

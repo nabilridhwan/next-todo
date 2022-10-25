@@ -34,3 +34,5 @@ describe('Add todo page', () => {
 		cy.get('[data-cy=todo_list]').contains(TODO_DESCRIPTION);
 	});
 });
+
+export {};
