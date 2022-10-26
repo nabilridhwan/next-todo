@@ -3,6 +3,7 @@ import BadRequest from '../../../classes/responses/BadRequest';
 import InternalServerError from '../../../classes/responses/InternalServerError';
 import Success from '../../../classes/responses/Success';
 import supabaseClient from '../../../database/supabaseClient';
+import { updateTodoSchema } from '../../../schemas/todos';
 
 export default async function handler(req, res) {
 	const { id } = req.query;
@@ -33,14 +34,6 @@ export default async function handler(req, res) {
 	}
 
 	if (req.method === 'PUT') {
-		// Post function
-		const putTodoSchema = yup.object().shape({
-			name: yup.string().required('Task name is required'),
-			desc: yup.string(),
-			completed: yup.bool().notRequired(),
-			due_date: yup.string().nullable(),
-		});
-
 		try {
 			const { data: getTodoData, error: getTodoError } =
 				await supabaseClient.from('todo').select('*').eq('id', id);
@@ -55,9 +48,11 @@ export default async function handler(req, res) {
 				);
 			}
 
+			// Append the todo and the request body behind it
 			let tObj = { ...t, ...req.body };
 
-			const validated = await putTodoSchema.validate(tObj);
+			// Get the final validated object
+			const validated = await updateTodoSchema.validate(tObj);
 
 			const { data, error } = await supabaseClient
 				.from('todo')

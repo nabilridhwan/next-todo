@@ -3,6 +3,7 @@ import BadRequest from '../../../classes/responses/BadRequest';
 import InternalServerError from '../../../classes/responses/InternalServerError';
 import Success from '../../../classes/responses/Success';
 import supabaseClient from '../../../database/supabaseClient';
+import { newTodoSchema } from '../../../schemas/todos';
 
 export default async function handler(req, res) {
 	if (req.method === 'GET') {
@@ -23,14 +24,9 @@ export default async function handler(req, res) {
 
 	if (req.method === 'POST') {
 		// Post function
-		const postTodoSchema = yup.object().shape({
-			name: yup.string().required('Task name is required'),
-			desc: yup.string().default(''),
-			due_date: yup.string().nullable(),
-		});
 
 		try {
-			const validated = await postTodoSchema.validate(req.body);
+			const validated = await newTodoSchema.validate(req.body);
 
 			const { name, desc, due_date } = validated;
 
