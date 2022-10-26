@@ -34,7 +34,7 @@ export function ToastManagerProvider({ children }) {
 			{children}
 
 			{currentToast && (
-				<div className="toast">
+				<div className="toast toast-top toast-end">
 					<div className={`alert ${currentToast.type} shadow-lg`}>
 						<div>
 							<span>{currentToast.message}</span>

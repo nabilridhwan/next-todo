@@ -40,7 +40,6 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 
 		await toggleCompletedTodoMutation(checked);
 
-		await queryClient.invalidateQueries(['getAllTodos']);
 		// Show toast message saying that the todo has been updated
 		showToast({
 			message: `Todo has been marked as ${
@@ -48,23 +47,24 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 			}`,
 			type: 'alert-success',
 		});
+
+		await queryClient.invalidateQueries(['getAllTodos']);
 	}
 
 	async function handleDelete(event) {
 		// Show the toast message saying that the todo is deleting
-		const toastId = showToast({
+		showToast({
 			message: `Deleting todo...`,
 			type: 'alert-info',
 		});
 
 		await deleteTodoMutation();
-
-		await queryClient.invalidateQueries(['getAllTodos']);
 		// Show toast message saying that the todo has been deleted
 		showToast({
 			message: `Todo has been deleted`,
 			type: 'alert-error',
 		});
+		await queryClient.invalidateQueries(['getAllTodos']);
 	}
 
 	return (
