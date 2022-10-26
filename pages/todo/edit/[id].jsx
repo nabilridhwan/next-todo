@@ -36,7 +36,9 @@ export default function EditTodo({ todo }) {
 	const [desc, setDesc] = useState(todo.desc);
 
 	const [due_date, setDueDate] = useState(
-		new Date(todo.due_date).toISOString().split('T')[0] || ''
+		todo.due_date
+			? new Date(todo.due_date).toISOString().split('T')[0]
+			: null
 	);
 	const [errorMessage, setErrorMessage] = useState('');
 
