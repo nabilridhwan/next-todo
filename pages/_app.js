@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ToastManagerProvider } from '../context/ToastManager';
 import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }) {
@@ -6,9 +7,11 @@ function MyApp({ Component, pageProps }) {
 	return (
 		<>
 			<QueryClientProvider client={queryClient}>
-				<div className="w-11/12 m-auto">
-					<Component {...pageProps} />
-				</div>
+				<ToastManagerProvider>
+					<div className="w-11/12 m-auto">
+						<Component {...pageProps} />
+					</div>
+				</ToastManagerProvider>
 			</QueryClientProvider>
 		</>
 	);

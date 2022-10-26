@@ -2,12 +2,15 @@ import { IconPencil, IconTrash } from '@tabler/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { ToastManagerContext } from '../context/ToastManager';
 import { deleteTodo } from '../frontend_api/deleteTodo';
 import { toggleCompletedTodo } from '../frontend_api/toggleCompletedTodo';
 
 export default function Todo({ id, name, completed, desc, due_date }) {
 	const queryClient = useQueryClient();
+
+	const { showToast, removeToast } = useContext(ToastManagerContext);
 
 	const {
 		mutateAsync: toggleCompletedTodoMutation,
@@ -27,13 +30,41 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 		const { checked } = event.currentTarget;
 		console.log(checked);
 
+		// Show the toast message saying that the todo is marked as completed / incomplete
+		showToast({
+			message: `Todo is marking as ${
+				checked ? 'completed' : 'incomplete'
+			}`,
+			type: 'alert-info',
+		});
+
 		await toggleCompletedTodoMutation(checked);
+
 		await queryClient.invalidateQueries(['getAllTodos']);
+		// Show toast message saying that the todo has been updated
+		showToast({
+			message: `Todo has been marked as ${
+				checked ? 'completed' : 'incomplete'
+			}`,
+			type: 'alert-success',
+		});
 	}
 
 	async function handleDelete(event) {
+		// Show the toast message saying that the todo is deleting
+		const toastId = showToast({
+			message: `Deleting todo...`,
+			type: 'alert-info',
+		});
+
 		await deleteTodoMutation();
+
 		await queryClient.invalidateQueries(['getAllTodos']);
+		// Show toast message saying that the todo has been deleted
+		showToast({
+			message: `Todo has been deleted`,
+			type: 'alert-error',
+		});
 	}
 
 	return (
@@ -129,37 +160,6 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 							<IconTrash size={20} />
 						</button>
 					</div>
-
-					{/* <Menu shadow="md" width={200}>
-					<Menu.Target>
-						<ActionIcon
-							data-cy={`menu-${id}-todo-button`}
-							variant="default"
-						>
-							<IconDots size={16} />
-						</ActionIcon>
-					</Menu.Target>
-
-					<Menu.Dropdown>
-						<Menu.Item
-							component="a"
-							href={`/todo/edit/${id}`}
-							icon={<IconPencil size={14} />}
-							data-cy={`edit-${id}-todo-button`}
-						>
-							Edit
-						</Menu.Item>
-
-						<Menu.Item
-							color="red"
-							icon={<IconTrash size={14} />}
-							onClick={handleDelete}
-							data-cy={`delete-${id}-todo-button`}
-						>
-							Delete
-						</Menu.Item>
-					</Menu.Dropdown>
-				</Menu> */}
 				</div>
 			</div>
 		</div>
