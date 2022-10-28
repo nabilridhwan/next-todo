@@ -1,12 +1,8 @@
-export default function ErrorAlert({ errorMessage }) {
+export default function ErrorAlert({ errorMessage, ...props }) {
 	// TODO: Check if errorMessage is array or JSON or string
 
 	return (
-		<div
-			className="alert alert-error"
-			title="An error occurred"
-			data-cy="add_todo_error"
-		>
+		<div className="alert alert-error" title="An error occurred" {...props}>
 			<div>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"

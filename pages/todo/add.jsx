@@ -65,7 +65,12 @@ export default function AddTodo() {
 			<h1>Add Todo</h1>
 
 			{/* Error alert box */}
-			{errorMessage && <ErrorAlert errorMessage={errorMessage} />}
+			{errorMessage && (
+				<ErrorAlert
+					data-cy="add_todo_error"
+					errorMessage={errorMessage}
+				/>
+			)}
 
 			<form onSubmit={handleSubmit}>
 				<div className="form-control">

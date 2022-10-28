@@ -84,7 +84,12 @@ export default function EditTodo({ todo }) {
 			<h1>Edit Todo</h1>
 
 			{/* Error alert box */}
-			{errorMessage && <ErrorAlert errorMessage={errorMessage} />}
+			{errorMessage && (
+				<ErrorAlert
+					data-cy="edit_todo_error"
+					errorMessage={errorMessage}
+				/>
+			)}
 
 			<form onSubmit={handleSubmit}>
 				<div className="form-control">

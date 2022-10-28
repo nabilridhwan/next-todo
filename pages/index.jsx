@@ -81,7 +81,12 @@ export default function Home() {
 				</div>
 
 				{/* Error alert box */}
-				{errorMessage && <ErrorAlert errorMessage={errorMessage} />}
+				{errorMessage && (
+					<ErrorAlert
+						data-cy="todo_error"
+						errorMessage={errorMessage}
+					/>
+				)}
 
 				{status === 'success' && (
 					<div data-cy="todo_list">
