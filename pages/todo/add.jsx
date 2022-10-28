@@ -3,6 +3,7 @@ import { AxiosError } from 'axios';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import ErrorAlert from '../../components/ErrorAlert';
 import { addTodo } from '../../frontend_api/addTodo';
 
 export default function AddTodo() {
@@ -19,7 +20,7 @@ export default function AddTodo() {
 	const [errorMessage, setErrorMessage] = useState('');
 	const [name, setName] = useState('');
 	const [desc, setDesc] = useState('');
-	const [due_date, setDueDate] = useState(null);
+	const [due_date, setDueDate] = useState('');
 
 	useEffect(() => {
 		if (status === 'error') {
@@ -32,7 +33,17 @@ export default function AddTodo() {
 			e.preventDefault();
 			// console.log(form.values);
 
-			await addTodoMutate({ name, desc, due_date });
+			const finalObj = {
+				name,
+				desc,
+				due_date,
+			};
+
+			if (!due_date) {
+				finalObj.due_date = null;
+			}
+
+			await addTodoMutate(finalObj);
 
 			window.location = '/';
 		} catch (error) {
@@ -54,35 +65,11 @@ export default function AddTodo() {
 			<h1>Add Todo</h1>
 
 			{/* Error alert box */}
-			{errorMessage && (
-				<div
-					className="alert alert-error"
-					title="An error occurred"
-					data-cy="add_todo_error"
-				>
-					<div>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							className="stroke-current flex-shrink-0 h-6 w-6"
-							fill="none"
-							viewBox="0 0 24 24"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth="2"
-								d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-							/>
-						</svg>
-						<span></span>
-						{errorMessage.join(', ')}
-					</div>
-				</div>
-			)}
+			{errorMessage && <ErrorAlert errorMessage={errorMessage} />}
 
 			<form onSubmit={handleSubmit}>
 				<div className="form-control">
-					<span class="label-text">Task Name</span>
+					<span className="label-text">Task Name</span>
 					<input
 						type="text"
 						label="Task name"
@@ -95,7 +82,7 @@ export default function AddTodo() {
 				</div>
 
 				<div className="form-control">
-					<span class="label-text">Task Description</span>
+					<span className="label-text">Task Description</span>
 
 					<textarea
 						type="text"
@@ -109,7 +96,7 @@ export default function AddTodo() {
 				</div>
 
 				<div className="form-control">
-					<span class="label-text">Due Date</span>
+					<span className="label-text">Due Date</span>
 					<input
 						type="date"
 						value={due_date}

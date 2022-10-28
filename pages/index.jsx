@@ -1,7 +1,10 @@
 import { IconPlus } from '@tabler/icons';
 import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import ErrorAlert from '../components/ErrorAlert';
 import Todo from '../components/Todo';
 import { getAllTodos } from '../frontend_api/getAllTodos';
 
@@ -14,6 +17,19 @@ export default function Home() {
 		error,
 		isRefetching,
 	} = useQuery(['getAllTodos'], () => getAllTodos());
+
+	const [errorMessage, setErrorMessage] = useState('');
+
+	useEffect(() => {
+		if (status === 'error') {
+			if (error instanceof AxiosError) {
+				const {
+					data: { data },
+				} = error.response;
+				setErrorMessage(data);
+			}
+		}
+	}, [status, error]);
 
 	return (
 		<div>
@@ -64,32 +80,24 @@ export default function Home() {
 					</Link>
 				</div>
 
-				{/* Overlay if the todos are being refetched or is loading */}
-				{/* <LoadingOverlay
-					overlayOpacity={0.2}
-					overlayColor="black"
-					loaderProps={{ color: 'white' }}
-					visible={isRefetching || isLoading}
-					zIndex={5}
-				/> */}
-
-				{status === 'error' && error && (
-					<div className="alert shadow-lg">
-						{JSON.stringify(error)}
-					</div>
-				)}
-
-				{/* {isLoading && (
-					<Center>
-						<Loader />
-					</Center>
-				)} */}
+				{/* Error alert box */}
+				{errorMessage && <ErrorAlert errorMessage={errorMessage} />}
 
 				{status === 'success' && (
 					<div data-cy="todo_list">
 						{todos.map((todo, index) => (
 							<Todo key={todo.id} {...todo} />
 						))}
+					</div>
+				)}
+
+				{status === 'success' && todos.length === 0 && (
+					<div className="flex my-48 justify-center items-center text-center">
+						<div className="text-white/50">
+							No todos found :(
+							<br />
+							Click the &quot;Add&quot; button to add a new todo
+						</div>
 					</div>
 				)}
 			</main>
