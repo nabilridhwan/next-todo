@@ -1,57 +1,77 @@
-import { IconX } from '@tabler/icons';
-import React from 'react';
+import React, { useEffect } from "react";
+import { v4 as uuid } from "uuid";
+import Toast from "../components/Toast";
 
 export const ToastManagerContext = React.createContext();
 
-const ALL_TYPES = [
-	'alert-info',
-	'alert-success',
-	'alert-warning',
-	'alert-error',
+const ALL_TOAST_TYPES = [
+	"alert-info",
+	"alert-success",
+	"alert-warning",
+	"alert-error",
 ];
 
 export function ToastManagerProvider({ children }) {
-	const [currentToast, setCurrentToast] = React.useState();
+	const [toasts, setToasts] = React.useState([]);
 
-	const showToast = ({ message, type }) => {
-		if (ALL_TYPES.includes(type) === false) {
-			type = 'alert-info';
+	// ID of the current toast that will be removed
+	const [removing, setRemoving] = React.useState("");
+
+	// Add toast
+	const addToast = ({ message, type }) => {
+		// If the toast type is not valid, default to alert-info
+		if (!ALL_TOAST_TYPES.includes(type)) {
+			type = "alert-info";
 		}
 
-		setCurrentToast({ message, type });
-
-		setTimeout(() => {
-			removeToast();
-		}, 8000);
+		// Add a toast
+		setToasts((toasts) => [...toasts, { message, type, id: uuid() }]);
 	};
 
-	const removeToast = () => {
-		setCurrentToast();
+	// Remove toast
+	const removeToast = (id) => {
+		setToasts((toasts) => toasts.filter((toast) => toast.id !== id));
 	};
+
+	// Remove toast after 5 seconds
+	useEffect(() => {
+		// If there is a previous toast
+		if (toasts.length > 1) {
+			// Remove the second last one (the one that was added before the last one)
+			setRemoving(toasts[toasts.length - 2].id);
+		}
+
+		if (toasts.length > 0) {
+			// Remove the last toast after 5 seconds
+			setTimeout(() => {
+				setRemoving(toasts[toasts.length - 1].id);
+			}, 5000);
+		}
+	}, [toasts]);
+
+	// View video on why we have different useEffect: https://youtu.be/kkA_iMkSJDk?t=3700
+	useEffect(() => {
+		if (removing) {
+			removeToast(removing);
+		}
+	}, [removing]);
 
 	return (
-		<ToastManagerContext.Provider value={{ showToast, removeToast }}>
+		<ToastManagerContext.Provider
+			value={{ showToast: addToast, removeToast }}
+		>
 			{children}
 
-			{currentToast && (
-				<div className="toast toast-top toast-end">
-					<div className={`alert ${currentToast.type} shadow-lg`}>
-						<div>
-							<span>{currentToast.message}</span>
-						</div>
-
-						{/* Close button */}
-						<div className="flex-none">
-							<button
-								onClick={removeToast}
-								className="btn btn-sm btn-square btn-ghost"
-							>
-								<IconX size={18} />
-							</button>
-						</div>
-					</div>
-				</div>
-			)}
+			{toasts &&
+				toasts.map((toast) => (
+					<Toast
+						key={toast.id}
+						message={toast.message}
+						type={toast.type}
+						id={toast.id}
+						removeToast={removeToast}
+					/>
+				))}
 		</ToastManagerContext.Provider>
 	);
 }
