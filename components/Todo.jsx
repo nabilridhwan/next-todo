@@ -1,26 +1,26 @@
-import { IconPencil, IconTrash } from '@tabler/icons';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { DateTime } from 'luxon';
-import Link from 'next/link';
-import { useContext, useState } from 'react';
-import { ToastManagerContext } from '../context/ToastManager';
-import { deleteTodo } from '../frontend_api/deleteTodo';
-import { toggleCompletedTodo } from '../frontend_api/toggleCompletedTodo';
+import { IconPencil, IconTrash } from "@tabler/icons";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { DateTime } from "luxon";
+import Link from "next/link";
+import { useContext, useState } from "react";
+import { ToastManagerContext } from "../context/ToastManager";
+import { deleteTodo } from "../frontend_api/deleteTodo";
+import { toggleCompletedTodo } from "../frontend_api/toggleCompletedTodo";
 
 export default function Todo({ id, name, completed, desc, due_date }) {
 	const queryClient = useQueryClient();
 
-	const { showToast, removeToast } = useContext(ToastManagerContext);
+	const { showToast } = useContext(ToastManagerContext);
 
 	const {
 		mutateAsync: toggleCompletedTodoMutation,
 		isLoading: toggleCompletedIsLoading,
-	} = useMutation(['toggleCompletedTodo', id], (completed) =>
+	} = useMutation(["toggleCompletedTodo", id], (completed) =>
 		toggleCompletedTodo({ id, completed })
 	);
 
 	const { mutateAsync: deleteTodoMutation, isLoading: deleteTodoIsLoading } =
-		useMutation(['deleteTodo', id], () => deleteTodo({ id }));
+		useMutation(["deleteTodo", id], () => deleteTodo({ id }));
 
 	const [disableButton, setDisableButton] = useState(
 		toggleCompletedIsLoading || deleteTodoIsLoading
@@ -33,9 +33,9 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 		// Show the toast message saying that the todo is marked as completed / incomplete
 		showToast({
 			message: `Todo is marking as ${
-				checked ? 'completed' : 'incomplete'
+				checked ? "completed" : "incomplete"
 			}`,
-			type: 'alert-info',
+			type: "alert-info",
 		});
 
 		await toggleCompletedTodoMutation(checked);
@@ -43,33 +43,33 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 		// Show toast message saying that the todo has been updated
 		showToast({
 			message: `Todo has been marked as ${
-				checked ? 'completed' : 'incomplete'
+				checked ? "completed" : "incomplete"
 			}`,
-			type: 'alert-success',
+			type: "alert-success",
 		});
 
-		await queryClient.invalidateQueries(['getAllTodos']);
+		await queryClient.invalidateQueries(["getAllTodos"]);
 	}
 
 	async function handleDelete(event) {
 		// Show the toast message saying that the todo is deleting
 		showToast({
 			message: `Deleting todo...`,
-			type: 'alert-info',
+			type: "alert-info",
 		});
 
 		await deleteTodoMutation();
 		// Show toast message saying that the todo has been deleted
 		showToast({
 			message: `Todo has been deleted`,
-			type: 'alert-error',
+			type: "alert-error",
 		});
-		await queryClient.invalidateQueries(['getAllTodos']);
+		await queryClient.invalidateQueries(["getAllTodos"]);
 	}
 
 	return (
 		<div
-			className="card shadow-lg outline outline-1 outline-white/10 my-3 todo-card"
+			className="card bg-base-200 shadow-lg outline outline-1 outline-white/10 my-3 todo-card"
 			id={`todo-${id}`}
 		>
 			<div className="card-body">
@@ -97,8 +97,8 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 							<a
 								className={
 									completed
-										? 'line-through link text-neutral-content/50'
-										: 'link'
+										? "line-through link text-neutral-content/50"
+										: "link"
 								}
 							>
 								{name}
@@ -108,8 +108,8 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 						{!completed && (
 							<p className="text-sm text-neutral-content/60">
 								{/* Shorten the desc to 30 characters and add ellipses if needed */}
-								{desc.length > 30
-									? `${desc.substring(0, 30)}...`
+								{desc.length > 40
+									? `${desc.substring(0, 40)}...`
 									: desc}
 							</p>
 						)}
@@ -121,9 +121,9 @@ export default function Todo({ id, name, completed, desc, due_date }) {
 										className={
 											DateTime.fromISO(due_date)
 												.diffNow()
-												.as('days') <= 7
-												? 'text-red-500 text-sm'
-												: ' text-sm'
+												.as("days") <= 0
+												? "text-red-500 text-sm"
+												: " text-sm"
 										}
 									>
 										{DateTime.fromISO(
