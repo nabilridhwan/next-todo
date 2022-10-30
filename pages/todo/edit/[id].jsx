@@ -1,11 +1,11 @@
-import { useMutation } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
-import Head from 'next/head';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import ErrorAlert from '../../../components/ErrorAlert';
-import { getTodoById } from '../../../frontend_api/getTodoById';
-import { updateTodo } from '../../../frontend_api/updateTodo';
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import Head from "next/head";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import ErrorAlert from "../../../components/ErrorAlert";
+import { getTodoById } from "../../../frontend_api/getTodoById";
+import { updateTodo } from "../../../frontend_api/updateTodo";
 
 export async function getServerSideProps(context) {
 	try {
@@ -13,10 +13,8 @@ export async function getServerSideProps(context) {
 
 		const data = await getTodoById({ id });
 
-		console.log(data);
-
 		if (!data || data.length === 0) {
-			throw new Error('No todo found');
+			throw new Error("No todo found");
 		}
 
 		return {
@@ -38,10 +36,10 @@ export default function EditTodo({ todo }) {
 
 	const [due_date, setDueDate] = useState(
 		todo.due_date
-			? new Date(todo.due_date).toISOString().split('T')[0]
+			? new Date(todo.due_date).toISOString().split("T")[0]
 			: null
 	);
-	const [errorMessage, setErrorMessage] = useState('');
+	const [errorMessage, setErrorMessage] = useState("");
 
 	const {
 		data,
@@ -49,12 +47,12 @@ export default function EditTodo({ todo }) {
 		isLoading,
 		error,
 		mutateAsync: updateTodoMutate,
-	} = useMutation(['updateTodo'], (data) => updateTodo({ ...data }), {
+	} = useMutation(["updateTodo"], (data) => updateTodo({ ...data }), {
 		useErrorBoundary: false,
 	});
 
 	useEffect(() => {
-		if (status === 'error') {
+		if (status === "error") {
 			console.log(error);
 		}
 	}, [status, error]);
@@ -62,9 +60,20 @@ export default function EditTodo({ todo }) {
 	async function handleSubmit(e) {
 		try {
 			e.preventDefault();
-			await updateTodoMutate({ name, desc, due_date, id: todo.id });
 
-			window.location = '/';
+			const finalObj = {
+				name,
+				desc,
+				due_date,
+			};
+
+			if (!due_date) {
+				finalObj.due_date = null;
+			}
+
+			await updateTodoMutate({ ...finalObj, id: todo.id });
+
+			window.location = "/";
 		} catch (error) {
 			console.log(error);
 			if (error instanceof AxiosError) {
@@ -106,7 +115,7 @@ export default function EditTodo({ todo }) {
 				</div>
 
 				<div className="form-control">
-					<span class="label-text">Task Description</span>
+					<span className="label-text">Task Description</span>
 
 					<textarea
 						type="text"
@@ -120,7 +129,7 @@ export default function EditTodo({ todo }) {
 				</div>
 
 				<div className="form-control">
-					<span class="label-text">Due Date</span>
+					<span className="label-text">Due Date</span>
 					<input
 						type="date"
 						value={due_date}
@@ -147,7 +156,7 @@ export default function EditTodo({ todo }) {
 						</Link>
 						<button
 							className={`btn btn-primary ${
-								isLoading ? 'loading' : ''
+								isLoading ? "loading" : ""
 							}`}
 							data-cy="submit_edit_todo_button"
 							type="submit"

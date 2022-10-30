@@ -1,11 +1,14 @@
-import { IconArrowLeft, IconPencil, IconTrash } from '@tabler/icons';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { DateTime } from 'luxon';
-import Head from 'next/head';
-import Link from 'next/link';
-import { deleteTodo } from '../../frontend_api/deleteTodo';
-import { getTodoById } from '../../frontend_api/getTodoById';
-import { toggleCompletedTodo } from '../../frontend_api/toggleCompletedTodo';
+import { IconCheck, IconPencil, IconTrash } from "@tabler/icons";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { DateTime } from "luxon";
+import Head from "next/head";
+import Link from "next/link";
+import { useContext } from "react";
+import BackButton from "../../components/BackButton";
+import { ToastManagerContext } from "../../context/ToastManager";
+import { deleteTodo } from "../../frontend_api/deleteTodo";
+import { getTodoById } from "../../frontend_api/getTodoById";
+import { toggleCompletedTodo } from "../../frontend_api/toggleCompletedTodo";
 
 export async function getServerSideProps(context) {
 	try {
@@ -13,14 +16,14 @@ export async function getServerSideProps(context) {
 
 		const data = await getTodoById({ id });
 
-		console.log(data);
-
 		if (!data || data.length === 0) {
-			throw new Error('No todo found');
+			throw new Error("No todo found");
 		}
 
+		const firstTodo = data[0];
+
 		return {
-			props: { todo: data[0] }, // will be passed to the page component as props
+			props: { ...firstTodo }, // will be passed to the page component as props
 		};
 	} catch (error) {
 		return {
@@ -33,34 +36,53 @@ export async function getServerSideProps(context) {
 }
 
 export default function EditTodo({
-	todo: { id, name, completed, desc, due_date, created_at, updated_at },
+	id,
+	name,
+	completed,
+	desc,
+	due_date,
+	created_at,
+	updated_at,
 }) {
 	const queryClient = useQueryClient();
+	const { showToast } = useContext(ToastManagerContext);
 
 	const {
 		mutateAsync: toggleCompletedTodoMutation,
 		isLoading: toggleCompletedIsLoading,
-	} = useMutation(['toggleCompletedTodo', id], (completed) =>
+	} = useMutation(["toggleCompletedTodo", id], (completed) =>
 		toggleCompletedTodo({ id, completed })
 	);
 
 	const { mutateAsync: deleteTodoMutation, isLoading: deleteTodoIsLoading } =
-		useMutation(['deleteTodo', id], () => deleteTodo({ id }));
+		useMutation(["deleteTodo", id], () => deleteTodo({ id }));
 
 	async function handleDelete(event) {
 		await deleteTodoMutation();
 
-		await queryClient.invalidateQueries(['getAllTodos']);
+		await queryClient.invalidateQueries(["getAllTodos"]);
 
-		window.location = '/';
+		window.location = "/";
 	}
 
-	async function handleChecked(event) {
-		const { checked } = event.currentTarget;
-		console.log(checked);
+	async function handleChecked() {
+		showToast({
+			message: `Todo is marking as ${
+				!completed ? "completed" : "incomplete"
+			}`,
+			type: "alert-info",
+		});
 
-		await toggleCompletedTodoMutation(checked);
-		await queryClient.invalidateQueries(['getAllTodos']);
+		await toggleCompletedTodoMutation(!completed);
+
+		showToast({
+			message: `Todo has been marked as ${
+				!completed ? "completed" : "incomplete"
+			}`,
+			type: "alert-success",
+		});
+
+		await queryClient.invalidateQueries(["getAllTodos"]);
 
 		window.location.reload();
 	}
@@ -71,48 +93,55 @@ export default function EditTodo({
 				<title>{name}</title>
 			</Head>
 
-			<Link href={`/`} passHref>
+			<BackButton href={"/"} />
+
+			<h1
+				className={
+					completed ? "line-through text-neutral-content/50" : ""
+				}
+			>
+				{name}
+			</h1>
+
+			<p className="text-white/70">
+				{desc ? <span>{desc}</span> : <span>No description</span>}
+			</p>
+
+			<div className="card bg-base-300 shadow-lg p-5 my-10 text-white/50">
+				<p>
+					Due on:{" "}
+					{due_date ? (
+						<>
+							{DateTime.fromISO(due_date).toFormat(
+								"dd LLL yyyy HH:mm:ss a"
+							)}
+						</>
+					) : (
+						<span>No due date</span>
+					)}
+				</p>
+
+				<p>
+					Created at:{" "}
+					{DateTime.fromISO(created_at).toFormat(
+						"dd LLL yyyy HH:mm:ss a"
+					)}
+				</p>
+
+				<p>
+					Last updated:{" "}
+					{DateTime.fromISO(updated_at).toFormat(
+						"dd LLL yyyy HH:mm:ss a"
+					)}
+				</p>
+			</div>
+
+			<div className="flex flex-wrap gap-3">
 				<button
-					className="btn"
+					className="btn btn-error"
 					component="a"
-					leftIcon={<IconArrowLeft size={16} />}
-					variant="outline"
+					onClick={handleDelete}
 				>
-					Back
-				</button>
-			</Link>
-
-			{/* <Checkbox
-						color="gray"
-						onChange={handleChecked}
-						checked={completed}
-					/> */}
-
-			<h1>{name}</h1>
-
-			<p>
-				{desc ? (
-					<span>{desc}</span>
-				) : (
-					<span className="text-gray-500">No description</span>
-				)}
-			</p>
-
-			<p>
-				Due on {DateTime.fromISO(due_date).toFormat('dd LLL yyyy')} (
-				{DateTime.fromISO(due_date).toRelative()})
-			</p>
-
-			<p>
-				Created at{' '}
-				{DateTime.fromISO(created_at).toFormat('dd LLL yyyy')} (
-				{DateTime.fromISO(created_at).toRelative()})
-			</p>
-
-			<p>Last updated {DateTime.fromISO(updated_at).toRelative()}</p>
-
-			<div className="flex">
-				<button className="btn" component="a" onClick={handleDelete}>
 					<IconTrash size={16} />
 					Delete
 				</button>
@@ -123,6 +152,15 @@ export default function EditTodo({
 						Edit
 					</button>
 				</Link>
+
+				<button
+					className="btn btn-secondary"
+					component="a"
+					onClick={handleChecked}
+				>
+					<IconCheck size={16} />
+					Mark {completed ? "Incomplete" : "Complete"}
+				</button>
 			</div>
 		</div>
 	);
